@@ -1,30 +1,24 @@
-require 'midilib/sequence'
-require 'midilib/consts'
-include MIDI
+require_relative 'lib/midiator'
 
-seq = Sequence.new
-meta_track = Track.new(seq)
-seq.tracks << meta_track
-meta_track.events << Tempo.new(Tempo.bpm_to_mpq(85))
-QUARTER = seq.note_to_delta('quarter')
+@seq = Midiator::Seq.new
 
-def create_track(seq, vol=64)
-  track = Track.new(seq)
-  seq.tracks << track
-  track.events << Controller.new(0, CC_VOLUME, vol)
-  track
+def create_trak
+  trak = Midiator::Trak.new(@seq)
+  @seq.tracks << trak
+  trak
 end
 
 def create_events(track)
-  Random.rand(4..8).times.map{ Random.rand(1..12) }.each do |pitch_class|
-    track.events << NoteOn.new(0, 64 + pitch_class, 127, 0)
-    track.events << NoteOff.new(0, 64 + pitch_class, 127, QUARTER)
+  Random.rand(4..8).times.map { Random.rand(1..12) }.each do |pitch_class|
+    track.events << MIDI::NoteOn.new(0, 64 + pitch_class, 127, 0)
+    track.events << MIDI::NoteOff.new(0, 64 + pitch_class, 127, @seq.beat)
   end
 end
 
-create_events(create_track(seq))
-create_events(create_track(seq))
+track1 = create_trak
+create_events(track1)
 
-File.open('./output/1.mid', 'wb') { |file| seq.write(file) }
+track2 = create_trak
+create_events(track2)
 
-# track.recalc_times
+File.open('./output/1.mid', 'wb') { |file| @seq.write(file) }
