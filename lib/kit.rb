@@ -5,6 +5,13 @@ require_relative 'midiator'
 #   measure
 #   beat
 class Kit
+
+  RESONATORS = [
+    :kick,
+    :snare,
+    :closed_hh
+  ]
+
   def initialize
     @kick = { octave: 1, pclass: :c }
     @snare = { octave: 1, pclass: :d }
