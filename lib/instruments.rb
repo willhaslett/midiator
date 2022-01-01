@@ -1,11 +1,19 @@
 require_relative 'midiator'
 
-# Caller is responsible for:
+# For all instruments, caller is responsible for:
 #   velocity
 #   measure
 #   beat
-class Kit
 
+# Inst
+class Inst
+  def note(octave: 3, pclass: :c, beats: 1)
+    Midiator::NoteParams.new(octave: octave, pclass: pclass, beats: beats)
+  end
+end
+
+# Kit
+class Kit
   RESONATORS = [
     :kick,
     :snare,
