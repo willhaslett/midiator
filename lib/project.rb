@@ -28,7 +28,7 @@ class Project
   end
 
   def create_notes
-    create_kit_notes
+    # create_kit_notes
     create_piano_notes
   end
 
