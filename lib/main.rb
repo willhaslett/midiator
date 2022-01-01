@@ -19,9 +19,8 @@ end
 
 def set_times(notes, delta_b:, measure: 1, beat: 1, exponent: 1)
   start_beat = mb_to_b(measure, beat)
-  puts start_beat
   notes.each_with_index do |note, index|
-    beat_from_start = start_beat index * (delta_b ** exponent)
+    beat_from_start = start_beat + delta_b * index**exponent
     raise 'Refusing to create note after measure 1000' if beat_from_start > 4000
 
     note.beat = beat_from_start
@@ -34,7 +33,7 @@ trak1 = create_trak
 
 notes = 12.times.map { @kit.snare }
 notes.each { |note| note.velocity = 100 }
-set_times_linear(notes, delta_b: 0.25, measure: 3, beat: 2)
+set_times(notes, delta_b: 1, exponent: 2)
 trak1.add_notes(notes)
 
 @traks.each(&:recalc_delta_from_times)
