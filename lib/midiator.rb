@@ -44,13 +44,17 @@ module Midiator
       ab: 32
     }
 
-    def initialize(note_params, beat_ticks, current_beat)
+    def initialize(note_params, beat_ticks)
       note_number = BASE_NOTE_NUMBERS[note_params.pclass] + (12 * note_params.octave)
-      start_beat = (note_params.measure - 1) * 4 + note_params.beat - 1
-      start_tick_offset = (start_beat - current_beat) * beat_ticks * 4
+      start_tick = ((4 * (note_params.measure - 1) + note_params.beat - 1) * beat_ticks).round
+      duration_ticks = (note_params.beats * beat_ticks).round
       @events = [
-        MIDI::NoteOn.new(0, note_number, note_params.velocity, start_tick_offset),
-        MIDI::NoteOff.new(0, note_number, note_params.velocity, start_tick_offset + note_params.beats * beat_ticks)
+
+        MIDI::NoteOn.new(0, note_number, note_params.velocity, 0, start_tick),
+        MIDI::NoteOff.new(0, note_number, note_params.velocity, 0, start_tick + duration_ticks)
+
+        # MIDI::NoteOn.new(0, note_number, note_params.velocity, start_tick, 0),
+        # MIDI::NoteOff.new(0, note_number, note_params.velocity, start_tick + duration_ticks, 0)
       ]
     end
   end
@@ -63,19 +67,19 @@ module Midiator
       super(seq)
       return if meta
 
-      @current_beat = 0
       @beat_ticks = seq.beat_ticks
       events << MIDI::Controller.new(0, MIDI::CC_VOLUME, volume)
     end
 
     def add_note(note_params)
-      note_events = Note.new(note_params, @beat_ticks, @current_beat).events
+      note_events = Note.new(note_params, @beat_ticks).events
       note_events.each { |event| events << event }
-      @current_beat += note_params.beats
     end
 
     def add_notes(notes = [])
       notes.each { |note_params| add_note(note_params) }
+      print_events
+      recalc_delta_from_times
     end
 
     def add_rest(beats)
@@ -98,6 +102,7 @@ module Midiator
       @tempo_trak.events << ::MIDI::Tempo.new(::MIDI::Tempo.bpm_to_mpq(@bpm))
     end
 
+    # It's just 480
     def beat_ticks
       @beat_ticks ||= note_to_delta('quarter')
     end

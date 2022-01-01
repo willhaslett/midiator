@@ -1,5 +1,5 @@
 source "https://rubygems.org"
 
-gem 'midilib', git: 'https://github.com/willhaslett/midilib.get'
+gem 'midilib'
 gem 'pry'
 gem 'rubocop'
