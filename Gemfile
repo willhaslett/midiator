@@ -1,6 +1,5 @@
 source "https://rubygems.org"
 
-gem 'midilib'
+gem 'midilib', git: 'https://github.com/willhaslett/midilib.get'
+gem 'pry'
 gem 'rubocop'
-gem 'awesome_print'
-
