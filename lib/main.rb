@@ -17,10 +17,15 @@ def mb_to_b(measure, beat)
   4 * (measure - 1) + beat
 end
 
-def set_times_linear(notes, delta_b:, measure: 1, beat: 1)
+def set_times(notes, delta_b:, measure: 1, beat: 1, exponent: 1)
   start_beat = mb_to_b(measure, beat)
   puts start_beat
-  notes.each_with_index { |note, index| note.beat = start_beat + (index * delta_b) }
+  notes.each_with_index do |note, index|
+    beat_from_start = start_beat index * (delta_b ** exponent)
+    raise 'Refusing to create note after measure 1000' if beat_from_start > 4000
+
+    note.beat = beat_from_start
+  end
 end
 
 @traks = []
