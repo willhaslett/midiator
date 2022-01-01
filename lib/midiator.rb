@@ -8,14 +8,7 @@ module Midiator
   class NoteParams
     attr_accessor :pclass, :octave, :velocity, :measure, :beat, :beats
 
-    def initialize(
-      pclass: :c,
-      octave: 0,
-      velocity: 0,
-      measure: 1,
-      beat: 1,
-      beats: 0
-    )
+    def initialize(pclass: nil, octave: nil, velocity: nil, measure: 1, beat: nil, beats: nil)
       @pclass = pclass
       @octave = octave
       @velocity = velocity
@@ -23,6 +16,13 @@ module Midiator
       @beat = beat
       @beats = beats
     end
+
+    def valid?
+      true
+      # puts self.inspect
+      # raise unless @pclass && @octave && @velocity && @measure && @beat && @beats
+    end
+
   end
 
   # A note
@@ -42,19 +42,15 @@ module Midiator
       fs: 30,
       g: 31,
       ab: 32
-    }
+    }.freeze
 
     def initialize(note_params, beat_ticks)
       note_number = BASE_NOTE_NUMBERS[note_params.pclass] + (12 * note_params.octave)
       start_tick = ((4 * (note_params.measure - 1) + note_params.beat - 1) * beat_ticks).round
       duration_ticks = (note_params.beats * beat_ticks).round
       @events = [
-
         MIDI::NoteOn.new(0, note_number, note_params.velocity, 0, start_tick),
         MIDI::NoteOff.new(0, note_number, note_params.velocity, 0, start_tick + duration_ticks)
-
-        # MIDI::NoteOn.new(0, note_number, note_params.velocity, start_tick, 0),
-        # MIDI::NoteOff.new(0, note_number, note_params.velocity, start_tick + duration_ticks, 0)
       ]
     end
   end
@@ -72,19 +68,14 @@ module Midiator
     end
 
     def add_note(note_params)
+      raise unless note_params.valid?
+
       note_events = Note.new(note_params, @beat_ticks).events
       note_events.each { |event| events << event }
     end
 
     def add_notes(notes = [])
       notes.each { |note_params| add_note(note_params) }
-      print_events
-      recalc_delta_from_times
-    end
-
-    def add_rest(beats)
-      note_params = NoteParams.new(beats: beats)
-      events << Note.new(note_params)
     end
   end
 
