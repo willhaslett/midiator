@@ -61,6 +61,7 @@ module Midiator
 
     def initialize(seq, volume: DEFAULT_VOLUME, meta: false)
       super(seq)
+      seq.tracks << self
       return if meta
 
       @beat_ticks = seq.beat_ticks
@@ -77,6 +78,7 @@ module Midiator
     def add_notes(notes = [])
       notes.each { |note_params| add_note(note_params) }
     end
+
   end
 
   # A sequence

@@ -18,13 +18,10 @@ class Project
   end
 
   def create_traks
-    @kit_trak = Midiator::Trak.new(@seq)
     @piano_trak = Midiator::Trak.new(@seq)
     @traks = [
-      # @kit_trak,
       @piano_trak
     ]
-    @traks.each { |trak| @seq.tracks << trak }
   end
 
   def create_notes
@@ -33,15 +30,7 @@ class Project
   end
 
   def create_piano_notes
-    notes = 800.times.map { @piano.note(octave: 4, pclass: :e) }
-    time_sweep(
-      notes,
-      delta_b: 0.0125,
-      coef_2nd: 5,
-      note_duration_proportion: 0.9
-    )
-    set_velocity(notes, 50)
-    @piano_trak.add_notes(notes)
+    notes = 40.times.map { @piano.note(octave: 4, pclass: :e) }
   end
 
   def create_kit_notes; end
