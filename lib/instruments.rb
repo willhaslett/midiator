@@ -1,6 +1,6 @@
 require_relative 'midiator'
 
-# For all instruments, caller is responsible for:
+# For all instruments, caller is responsible for these after instiantiation:
 #   velocity
 #   measure
 #   beat

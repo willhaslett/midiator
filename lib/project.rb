@@ -30,7 +30,10 @@ class Project
   end
 
   def create_piano_notes
-    notes = 40.times.map { @piano.note(octave: 4, pclass: :e) }
+    notes = 100.times.map { @piano.note(octave: 4, pclass: :e) }
+    harmonic(notes, :velocity)
+    set_times(notes, delta_b: 1)
+    @piano_trak.add_notes(notes)
   end
 
   def create_kit_notes; end
